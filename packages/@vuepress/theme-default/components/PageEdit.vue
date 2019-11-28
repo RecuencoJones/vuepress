@@ -67,7 +67,8 @@ export default {
 
   methods: {
     createEditLink (repo, docsRepo, docsDir, docsBranch, path) {
-      const bitbucket = /bitbucket.org/
+      const bitbucket = /bitbucket\.org/
+      const bitbucketServer = /bitbucket.*server/i
       if (bitbucket.test(repo)) {
         const base = outboundRE.test(docsRepo) ? docsRepo : repo
         return (
@@ -77,6 +78,18 @@ export default {
           + (docsDir ? docsDir.replace(endingSlashRE, '') + '/' : '')
           + path
           + `?mode=edit&spa=0&at=${docsBranch}&fileviewer=file-view-default`
+        )
+      }
+
+      if (bitbucketServer.test(docsRepo)) {
+        const { bitbucketRepo } = this.$site.themeConfig
+
+        return (
+          this.$site.themeConfig.bitbucketRepo.replace(endingSlashRE, '')
+          + `/browse/`
+          + (docsDir ? docsDir.replace(endingSlashRE, '') + '/' : '')
+          + path
+          + `?at=${docsBranch}&useDefaultHandler=true`
         )
       }
 
